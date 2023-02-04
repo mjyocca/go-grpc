@@ -1,13 +1,24 @@
 package main
 
 import (
+	"grpcexample/tutorial"
 	"log"
 	"net"
+
+	"google.golang.org/grpc"
 )
 
 func main() {
-	_, err := net.Listen("tcp", ":9000")
+	println("gRPC server tutorial in Go")
+
+	listener, err := net.Listen("tcp", ":9000")
 	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
+		panic(err)
+	}
+
+	s := grpc.NewServer()
+	tutorial.RegisterTutorialServer(s, &tutorial.Server{})
+	if err := s.Serve(listener); err != nil {
+		log.Fatalf("failed to serve: %v", err)
 	}
 }
